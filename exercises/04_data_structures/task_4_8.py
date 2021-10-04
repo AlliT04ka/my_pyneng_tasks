@@ -26,3 +26,6 @@
 """
 
 ip = "192.168.3.1"
+ip = list(map(lambda x: int(x), ip.split('.')))
+print("{:<10}{:<10}{:<10}{:<10}".format(ip[0], ip[1], ip[2], ip[3]))
+print("{:08b}  {:08b}  {:08b}  {:08b}".format(ip[0], ip[1], ip[2], ip[3]))

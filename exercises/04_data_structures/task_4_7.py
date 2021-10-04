@@ -16,3 +16,5 @@
 """
 
 mac = "AAAA:BBBB:CCCC"
+mac_list = list(map(lambda x: int(x, 16), mac.split(':')))
+print("{:08b}{:08b}{:08b}".format(mac_list[0], mac_list[1], mac_list[2]))

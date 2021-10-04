@@ -18,3 +18,10 @@ Outbound Interface    FastEthernet0/0
 """
 
 ospf_route = "      10.0.24.0/24 [110/41] via 10.0.13.3, 3d18h, FastEthernet0/0"
+my_list = ospf_route.strip().split()
+my_list.remove('via')
+values_list = list(map(lambda x: x.strip('[],'), my_list))
+keys_list = ['Prefix', 'AD/Metric', 'Next-Hop', 'Last update', 'Outbound Interface']
+route_dict = dict(zip(keys_list, values_list))
+for key, value in route_dict.items():
+    print("{0:<22}{1}".format(key, value))
