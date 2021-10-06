@@ -44,3 +44,12 @@ london_co = {
         "routing": True,
     },
 }
+router = input('Input router name: ')
+parameter = input('Input patametr name: ')
+if router in london_co.keys():
+    if parameter in london_co[router].keys():
+        print(london_co[router][parameter])
+    else:
+        print('Parameter not found')
+else:
+    print('Router not found')

@@ -30,3 +30,16 @@ Out[1]: '11111111111111111111111111110000'
 
 Ограничение: Все задания надо выполнять используя только пройденные темы.
 """
+user_input = input('Input net/mask: ')
+net_mask = user_input.split('/')
+net = list(map(lambda x: int(x), net_mask[0].split('.')))
+string_mask = '1' *  int(net_mask[1]) + '0' * (32-int(net_mask[1]))
+mask = []
+for i in range(0, 32, 8):
+    mask.append(int(string_mask[i:i + 8], 2))
+print('Network:')
+print('{:<10}{:<10}{:<10}{:<10}'.format(net[0], net[1], net[2], net[3]))
+print('{:08b}  {:08b}  {:08b}  {:08b}'.format(net[0], net[1], net[2], net[3]))
+print('\nMask:\n/' + net_mask[1])
+print('{:<10}{:<10}{:<10}{:<10}'.format(mask[0], mask[1], mask[2], mask[3]))
+print('{:08b}  {:08b}  {:08b}  {:08b}'.format(mask[0], mask[1], mask[2], mask[3]))
