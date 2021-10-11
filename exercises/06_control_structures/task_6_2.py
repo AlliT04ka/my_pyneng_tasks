@@ -12,3 +12,16 @@
 
 Ограничение: Все задания надо выполнять используя только пройденные темы.
 """
+ip = input('Input IP adress in format 10.0.1.1 : ')
+ips = list(map(lambda x: int(x), ip.split('.')))
+if ip == '0.0.0.0':
+    msg = 'unassigned'
+elif ip == '255.255.255.255':
+    msg = 'local broadcast'
+elif 1 <= ips[0] <= 223:
+    msg = 'unicast'
+elif 224 <= ips[0] <= 239:
+    msg = 'multicast'
+else:
+    msg = 'unused'
+print(msg)

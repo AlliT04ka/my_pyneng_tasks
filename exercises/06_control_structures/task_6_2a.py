@@ -17,3 +17,23 @@
 
 Ограничение: Все задания надо выполнять используя только пройденные темы.
 """
+ip = input('Input IP adress in format 10.0.1.1 : ')
+try:
+    ips = list(map(lambda x: int(x), ip.split('.')))
+except ValueError:
+    msg = 'Неправильный IP-адрес'
+else:
+    if len(ips) == 4 and len([x for x in ips if 0 <= x <= 255]) == 4:
+        if ips == [0, 0, 0, 0]:
+            msg = 'unassigned'
+        elif ips == [255, 255, 255, 255]:
+            msg = 'local broadcast'
+        elif 1 <= ips[0] <= 223:
+            msg = 'unicast'
+        elif 224 <= ips[0] <= 239:
+            msg = 'multicast'
+        else:
+            msg = 'unused'
+    else:
+        msg = 'Неправильный IP-адрес'
+print(msg)
