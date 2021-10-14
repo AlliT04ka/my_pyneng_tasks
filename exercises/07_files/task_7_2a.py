@@ -15,5 +15,19 @@
 Ограничение: Все задания надо выполнять используя только пройденные темы.
 
 """
+import sys
+
 
 ignore = ["duplex", "alias", "configuration"]
+if sys.argv[1] is None:
+    sys.exit()
+with open(sys.argv[1], 'r') as f:
+    for line in f:
+        flg_ignore = False
+        for elem in ignore:
+            if elem in line:
+                flg_ignore = True
+                continue
+        if not line.startswith('!') and not flg_ignore:
+            print(line, end='')
+

@@ -17,3 +17,15 @@ Enter VLAN number: 10
 Ограничение: Все задания надо выполнять используя только пройденные темы.
 
 """
+vlan = int(input('Input vlan number: '))
+result = []
+with open('CAM_table.txt', 'r') as f:
+    for line in f:
+        #print(line)
+        if 'DYNAMIC' in line:
+            result.append(line.split())
+            result = list(map(lambda x: [int(x[0]),] + x[1:], result))
+result.sort()
+for elem in result:
+    if vlan == elem[0]:
+        print("{:<9}{:20}{}".format(elem[0], elem[1], elem[3]))

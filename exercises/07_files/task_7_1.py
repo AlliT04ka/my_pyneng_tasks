@@ -14,3 +14,12 @@ Outbound Interface    FastEthernet0/0
 Ограничение: Все задания надо выполнять используя только пройденные темы.
 
 """
+names = ['Prefix', 'AD/Metric', 'Next-Hop', 'Last update', 'Outbound Interface']
+with open('ospf.txt', 'r') as f:
+    for line in f:
+        data = line.split()
+        data =  list(map(lambda x: x.strip('[],'), data))
+        data.pop(3)
+        result = dict(zip(names, data[1:]))
+        for key, value in result.items():
+            print('{:<23}{}'.format(key, value))

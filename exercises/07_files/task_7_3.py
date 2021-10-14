@@ -20,3 +20,12 @@
 Ограничение: Все задания надо выполнять используя только пройденные темы.
 
 """
+result = []
+with open('CAM_table.txt', 'r') as f:
+    for line in f:
+        #print(line)
+        if 'DYNAMIC' in line:
+            result.append(line.split())
+            result = list(map(lambda x: [int(x[0]),] + x[1:], result))
+for elem in result:
+    print("{:<9}{:20}{}".format(elem[0], elem[1], elem[3]))
