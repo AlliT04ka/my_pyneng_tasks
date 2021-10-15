@@ -64,3 +64,21 @@ def ignore_command(command, ignore):
         if word in command:
             ignore_status = True
     return ignore_status
+
+
+def convert_config_to_dict(config_filename):
+    result = dict()
+    current_command = ''
+    with open(config_filename, 'r') as f:
+        all_strings = f.readlines()
+    for line in all_strings:
+        line = line.replace('\n', '')
+        if not (line.startswith('!') or ignore_command(line, ignore)) and line:
+            if line.startswith(' '):
+                subcommands = result[current_command]
+                subcommands.append(line.strip())
+            else:
+                current_command = line.strip()
+                result[current_command] = []
+    return result
+

@@ -25,3 +25,38 @@
 
 Ограничение: Все задания надо выполнять используя только пройденные темы.
 """
+def get_int_vlan_map(config_filename):
+    with open(config_filename, 'r') as f:
+        all_strings = f.read().split('!')
+    cleared_intf_list = [a.strip().split('\n') for a in all_strings if 'interface' in a]
+    access_intf = dict()
+    trunk_intf = dict()
+    for elem in cleared_intf_list:
+        vlan = ''
+        flg_access = flg_trunk = False
+        cleared_elem = [a.strip() for a in elem]
+        if 'switchport mode access' in cleared_elem:
+            flg_access = True
+        elif 'switchport mode trunk' in cleared_elem:
+            flg_trunk = True
+        else:
+            continue
+        interface = cleared_elem[0].replace('interface ', '')
+        for string in cleared_elem:
+            if 'vlan' in string:
+                vlan = string.split()[-1].split(',')
+                if len(vlan) == 1:
+                    vlan = int(vlan[0])
+                elif len(vlan) > 1:
+                    vlan = [int(a) for a in vlan if a.isdigit()]
+                break
+            elif flg_access and 'duplex auto' in string:
+                vlan = 1
+                break
+        if interface and vlan:
+            if flg_access:
+                access_intf[interface] = vlan
+            elif flg_trunk:
+                trunk_intf[interface] = vlan
+    return access_intf, trunk_intf
+
