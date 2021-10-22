@@ -43,6 +43,20 @@ def parse_cdp_neighbors(command_output):
     и с файлами и с выводом с оборудования.
     Плюс учимся работать с таким выводом.
     """
+    strings = command_output.split('\n')
+    for cur_string in strings:
+        if 'show cdp neighbors' in cur_string:
+            device = cur_string.split('>')[0]
+            break
+    devices = [a for a in strings if 'S I' in a]
+    result = dict()
+    for cur_device in devices:
+        connection = cur_device.split()
+        device_id = connection[0]
+        local_intrfce = connection[1] + connection[2]
+        port_id = connection[-2] + connection[-1]
+        result[(device, local_intrfce)] = (device_id, port_id)
+    return result
 
 
 if __name__ == "__main__":
