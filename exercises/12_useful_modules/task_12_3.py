@@ -18,3 +18,6 @@ Reachable    Unreachable
              10.1.1.9
 
 """
+from tabulate import tabulate
+def print_ip_table(reachable: list, unreachable: list):
+    print(tabulate({'Reachable': reachable, 'Unreachable': unreachable}, headers='keys'))

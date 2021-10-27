@@ -14,3 +14,16 @@
 
 Ограничение: Все задания надо выполнять используя только пройденные темы.
 """
+import subprocess
+
+
+def ping_ip_addresses(list_ip):
+    alive = []
+    unreachable = []
+    for ip in list_ip:
+        reply = subprocess.run(['ping', '-c', '3', '-n', ip])
+        if reply.returncode == 0:
+            alive.append(ip)
+        else:
+            unreachable.append(ip)
+    return alive, unreachable
