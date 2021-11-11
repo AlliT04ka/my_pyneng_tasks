@@ -24,3 +24,19 @@ interface Loopback0
 
 Проверить работу функции на примере файла config_r1.txt.
 """
+import re
+
+
+def get_ints_without_description(file_name):
+    all_interfaces = []
+    intrf_with_desc = dict()
+    with open(file_name, 'r') as f:
+        for line in f:
+            match_intrf = re.search(r'^interface (\S+)', line)
+            if match_intrf:
+                interface = match_intrf.group(1)
+                all_interfaces.append(interface)
+            match = re.search(r'^ description .+', line)
+            if match:
+                intrf_with_desc[interface] = match.group()
+    return [intrf for intrf in all_interfaces if intrf not in intrf_with_desc.keys()]

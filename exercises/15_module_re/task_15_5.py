@@ -26,3 +26,11 @@ description Connected to SW1 port Eth 0/1
 
 Проверить работу функции на файле sh_cdp_n_sw1.txt.
 """
+import re
+
+
+def generate_description_from_cdp(filemane):
+    with open(filemane, 'r') as f:
+        match = re.findall(r'(?P<dev>\S+)\s+(?P<intrf>\S+ \S+)\s+\d+\s+\S \S \S\s+\d+\s+(?P<port>\S+.+\d)', f.read())
+        if match:
+            return {intrf: 'description Connected to {} port {}'.format(dev, port) for dev, intrf, port in match}

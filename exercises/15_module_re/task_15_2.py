@@ -21,3 +21,13 @@
 Проверить работу функции на примере файла sh_ip_int_br.txt.
 
 """
+import re
+
+
+def parse_sh_ip_int_br(file_name):
+    with open(file_name, 'r') as f:
+        match = re.findall(r'(?P<interface>\S+\d)\s+'
+                           r'(?P<ip>\S+)\s+\w+\s+\w+\s+'
+                           r'(?P<status>\S+\s?\w*)\s*'
+                           r'(?P<protocol>\S+)', f.read())
+        return [(intr, ip , status.strip(), proto) for intr, ip, status, proto in match]
