@@ -36,3 +36,20 @@
 в файл topology.yaml. Он понадобится в следующем задании.
 
 """
+import re
+import yaml
+from task_17_3 import parse_sh_cdp_neighbors
+
+
+def generate_topology_from_cdp(list_of_files, save_to_filename=None):
+    result = dict()
+    for elem in list_of_files:
+        with open(elem) as f:
+            new_router = parse_sh_cdp_neighbors(f.read())
+            if len(new_router) != 0:
+                result.update(new_router)
+    if not save_to_filename is None:
+        with open(save_to_filename, 'w') as f:
+            yaml.dump(result, f, default_flow_style=False)
+    return result
+
