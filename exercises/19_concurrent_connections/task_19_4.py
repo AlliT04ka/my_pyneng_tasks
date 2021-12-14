@@ -105,3 +105,59 @@ R3#
 
 Для выполнения задания можно создавать любые дополнительные функции.
 """
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import yaml
+import netmiko
+import re
+from pprint import pprint
+
+
+
+def send_command(device, showcommand, configcommand):
+    ip = device['host']
+    with netmiko.ConnectHandler(**device) as ssh:
+        ssh.enable()
+        regex = r'.*\n(?P<prompt>R\d*#)'
+        output_prompt = ssh.send_command('show', strip_prompt=False)
+        match = re.search(regex, output_prompt, re.DOTALL)
+        if match:
+            prompt = match.group('prompt')
+        else:
+            print('prompt not found')
+        if showcommand:
+            prompt = prompt + showcommand
+            output = prompt + '\n' + ssh.send_command(showcommand)
+        if configcommand:
+            output = prompt + '\n' + ssh.send_config_set(configcommand)
+        return {prompt: output}
+
+
+
+def send_commands_to_devices(devices, filename, **kwargs):
+    flag_show = flag_config = False
+    if 'show' in kwargs.keys():
+        show = kwargs['show']
+        flag_show = True
+    else:
+        show = None
+    if 'config' in kwargs.keys():
+        config = kwargs['config']
+        flag_config = True
+    else:
+        config = None
+    if flag_show and flag_config:
+        raise ValueError
+    if 'limit' in kwargs.keys():
+        limit = kwargs['limit']
+    else:
+        limit = 3
+    data = {}
+    device_command_list = []
+    with ThreadPoolExecutor(max_workers=limit) as executor:
+        future_list = [
+            executor.submit(send_command, device, show, config) for device in devices]
+        for f in as_completed(future_list):
+            data.update(f.result())
+        with open(filename, 'w') as ff:
+            ff.write('\n'.join(data.values()))
+

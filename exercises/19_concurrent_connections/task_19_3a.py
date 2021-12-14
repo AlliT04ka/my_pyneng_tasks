@@ -49,6 +49,14 @@ O        10.30.0.0/24 [110/20] via 192.168.100.1, 07:12:03, Ethernet0/0
 Проверить работу функции на устройствах из файла devices.yaml и словаре commands
 """
 
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import yaml
+import netmiko
+import re
+from pprint import pprint
+
+
+
 # Этот словарь нужен только для проверки работа кода, в нем можно менять IP-адреса
 # тест берет адреса из файла devices.yaml
 commands = {
@@ -56,3 +64,42 @@ commands = {
     "192.168.100.1": ["sh ip int br", "sh int desc"],
     "192.168.100.2": ["sh int desc"],
 }
+
+def send_show_command(device, command):
+    ip = device['host']
+    with netmiko.ConnectHandler(**device) as ssh:
+        ssh.enable()
+        regex = r'.*\n(?P<prompt>R\d*#)'
+        output_prompt = ssh.send_command('show', strip_prompt=False)
+        match = re.search(regex, output_prompt, re.DOTALL)
+        if match:
+            prompt = match.group('prompt') + command
+        else:
+            print('prompt not found')
+        output = prompt + '\n' + ssh.send_command(command)
+        return {prompt: output}
+
+
+
+def send_command_to_devices(devices,commands_dict, filename, limit=3):
+    data = {}
+    device_command_list = []
+    with ThreadPoolExecutor(max_workers=limit) as executor:
+        for device in devices:
+            device_command_list.extend([(device, x) for x in commands_dict[device['host']]])
+        future_list = [
+            executor.submit(send_show_command, dev, com) for dev, com in device_command_list
+        ]
+        for f in as_completed(future_list):
+            data.update(f.result())
+        with open(filename, 'w') as ff:
+            ff.write('\n'.join(data.values()))
+
+
+
+if __name__ == '__main__':
+    with open('devices.yaml') as f:
+        devices = yaml.safe_load(f)
+    pprint(send_command_to_devices(devices, commands, 'result.txt'))
+
+
